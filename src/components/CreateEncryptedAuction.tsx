@@ -6,7 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useFHEBidding } from '@/hooks/useFHEBidding';
 import { useAccount } from 'wagmi';
-import { Lock, Plus, Shield, Clock, DollarSign } from 'lucide-react';
+import { Lock, Plus, Zap, Clock, DollarSign } from 'lucide-react';
 import { toast } from 'sonner';
 
 export const CreateEncryptedAuction = () => {
@@ -97,7 +97,7 @@ export const CreateEncryptedAuction = () => {
     return (
       <Card className="w-full max-w-2xl mx-auto bg-gradient-to-br from-slate-900/50 to-slate-800/50 border-slate-700/50 backdrop-blur-sm">
         <CardContent className="p-8 text-center">
-          <Shield className="h-16 w-16 text-cyan-400 mx-auto mb-4" />
+          <Zap className="h-16 w-16 text-cyan-400 mx-auto mb-4" />
           <h3 className="text-xl font-semibold text-white mb-2">Connect Your Wallet</h3>
           <p className="text-slate-400">
             Please connect your wallet to create encrypted auctions
@@ -218,7 +218,7 @@ export const CreateEncryptedAuction = () => {
           {/* Encryption Info */}
           <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700/50">
             <div className="flex items-start gap-3">
-              <Shield className="h-5 w-5 text-cyan-400 mt-0.5" />
+              <Zap className="h-5 w-5 text-cyan-400 mt-0.5" />
               <div>
                 <h4 className="text-white font-semibold mb-1">FHE Encryption</h4>
                 <p className="text-slate-300 text-sm">

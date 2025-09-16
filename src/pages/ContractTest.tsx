@@ -9,7 +9,7 @@ import { useContractEvents } from '@/hooks/useContractEvents';
 import { FHEStatusIndicator, FHEInfoPanel } from '@/components/FHEStatusIndicator';
 import { useAccount } from 'wagmi';
 import { 
-  Shield, 
+  Zap, 
   Lock, 
   Activity, 
   CheckCircle, 

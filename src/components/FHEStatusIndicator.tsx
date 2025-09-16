@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Badge } from '@/components/ui/badge';
-import { Shield, Lock, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
+import { Lock, CheckCircle, AlertCircle, Loader2, Zap, Key } from 'lucide-react';
 import { getFHEStatus } from '../lib/fhe-encryption';
 
 interface FHEStatusIndicatorProps {
@@ -58,7 +58,7 @@ export const FHEStatusIndicator = ({ className = '', showDetails = false }: FHES
       
       {showDetails && (
         <div className="flex items-center gap-1 text-xs text-slate-400">
-          <Shield className="h-3 w-3" />
+          <Key className="h-3 w-3" />
           <span>Privacy Protected</span>
         </div>
       )}
@@ -116,7 +116,7 @@ export const FHEInfoPanel = () => {
   return (
     <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700/50">
       <div className="flex items-center gap-2 mb-3">
-        <Shield className="h-5 w-5 text-cyan-400" />
+        <Zap className="h-5 w-5 text-cyan-400" />
         <h3 className="text-white font-semibold">FHE Encryption Status</h3>
       </div>
       

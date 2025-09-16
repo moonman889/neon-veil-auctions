@@ -7,7 +7,7 @@ import { useFHEBidding } from '@/hooks/useFHEBidding';
 import { useContractData } from '@/hooks/useContractData';
 import { useContractEvents } from '@/hooks/useContractEvents';
 import { useAccount } from 'wagmi';
-import { Lock, Eye, EyeOff, Clock, User, Shield, Activity } from 'lucide-react';
+import { Lock, Eye, EyeOff, Clock, User, Zap, Activity } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface EncryptedAuctionCardProps {
@@ -103,7 +103,7 @@ export const EncryptedAuctionCard = ({
         </div>
         
         <CardTitle className="text-xl font-bold text-white flex items-center gap-2">
-          <Shield className="h-5 w-5 text-cyan-400" />
+          <Zap className="h-5 w-5 text-cyan-400" />
           {name}
         </CardTitle>
         
@@ -234,7 +234,7 @@ export const EncryptedAuctionCard = ({
         {/* Encryption Status */}
         <div className="bg-slate-800/50 rounded-lg p-3 border border-slate-700/50">
           <div className="flex items-center gap-2 text-sm">
-            <Shield className="h-4 w-4 text-cyan-400" />
+            <Zap className="h-4 w-4 text-cyan-400" />
             <span className="text-slate-300">
               All bid data is encrypted using FHE technology
             </span>

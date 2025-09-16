@@ -5,7 +5,7 @@ import { CreateEncryptedAuction } from "@/components/CreateEncryptedAuction";
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useAccount } from 'wagmi';
 import { Link } from "react-router-dom";
-import { ArrowLeft, Plus, Shield, Lock } from "lucide-react";
+import { ArrowLeft, Plus, Zap, Lock } from "lucide-react";
 import { useState } from 'react';
 
 // Mock data for auctions
@@ -241,7 +241,7 @@ const AuctionApp = () => {
             <div className="bg-slate-900/95 backdrop-blur-md rounded-lg border border-slate-700/50 p-6">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-                  <Shield className="h-6 w-6 text-cyan-400" />
+                  <Zap className="h-6 w-6 text-cyan-400" />
                   Create Encrypted Auction
                 </h2>
                 <Button
