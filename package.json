@@ -10,7 +10,10 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "security:check": "node scripts/check-security.js",
-    "pre-commit": "npm run security:check && npm run lint"
+    "pre-commit": "npm run security:check && npm run lint",
+    "deploy:contract": "npx hardhat run scripts/deploy.js --network sepolia",
+    "verify:contract": "node scripts/verify-contract.js",
+    "test:contract": "npx hardhat test"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

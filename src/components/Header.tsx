@@ -1,5 +1,6 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { Link } from "react-router-dom";
+import { FHEStatusCompact } from './FHEStatusIndicator';
 
 export const Header = () => {
   return (
@@ -7,7 +8,10 @@ export const Header = () => {
       <div className="flex items-center justify-between max-w-7xl mx-auto">
         <Link to="/" className="flex items-center space-x-4 hover:opacity-80 transition-opacity">
           <div className="w-8 h-8 bg-gradient-to-br from-neon-cyan to-neon-purple rounded-lg animate-glow"></div>
-          <h1 className="text-xl font-bold text-gradient-neon">Neon Veil Auctions</h1>
+          <div className="flex items-center gap-3">
+            <h1 className="text-xl font-bold text-gradient-neon">Neon Veil Auctions</h1>
+            <FHEStatusCompact />
+          </div>
         </Link>
         
         <nav className="hidden md:flex items-center space-x-6">

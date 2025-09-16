@@ -1,11 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { useFHEBidding } from '@/hooks/useFHEBidding';
+import { useContractData } from '@/hooks/useContractData';
+import { useContractEvents } from '@/hooks/useContractEvents';
 import { useAccount } from 'wagmi';
-import { Lock, Eye, EyeOff, Clock, User, Shield } from 'lucide-react';
+import { Lock, Eye, EyeOff, Clock, User, Shield, Activity } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface EncryptedAuctionCardProps {
@@ -36,25 +38,47 @@ export const EncryptedAuctionCard = ({
   minBidIncrement,
 }: EncryptedAuctionCardProps) => {
   const { address } = useAccount();
-  const { placeEncryptedBid, isBidding, isEncrypting } = useFHEBidding();
+  const { placeEncryptedBid, isBidding, isEncrypting, fheInitialized } = useFHEBidding();
+  const { getEventsForAuction } = useContractEvents();
   const [bidAmount, setBidAmount] = useState('');
   const [showBidForm, setShowBidForm] = useState(false);
   const [isEncrypted, setIsEncrypted] = useState(true);
+  const [auctionEvents, setAuctionEvents] = useState<any[]>([]);
+  const [realTimeBidCount, setRealTimeBidCount] = useState(bidCount);
 
   const timeLeft = endTime - Date.now();
   const hoursLeft = Math.max(0, Math.floor(timeLeft / (1000 * 60 * 60)));
   const minutesLeft = Math.max(0, Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60)));
 
+  // Update real-time bid count from events
+  useEffect(() => {
+    const events = getEventsForAuction(auctionId);
+    setAuctionEvents(events);
+    
+    const bidEvents = events.filter(event => event.type === 'BidPlaced');
+    setRealTimeBidCount(bidEvents.length);
+  }, [auctionId, getEventsForAuction]);
+
   const handlePlaceBid = async () => {
+    if (!fheInitialized) {
+      toast.error('FHE encryption not initialized. Please wait...');
+      return;
+    }
+
     const amount = parseFloat(bidAmount);
     if (amount <= currentBid + minBidIncrement) {
       toast.error(`Bid must be at least ${currentBid + minBidIncrement} ETH`);
       return;
     }
 
-    await placeEncryptedBid(auctionId, amount);
-    setBidAmount('');
-    setShowBidForm(false);
+    try {
+      await placeEncryptedBid(auctionId, amount);
+      setBidAmount('');
+      setShowBidForm(false);
+    } catch (error) {
+      console.error('Failed to place bid:', error);
+      toast.error('Failed to place encrypted bid');
+    }
   };
 
   const toggleEncryption = () => {
@@ -118,8 +142,11 @@ export const EncryptedAuctionCard = ({
           
           <div className="flex items-center justify-between">
             <span className="text-slate-400 text-sm">Bid Count:</span>
-            <span className="text-white font-semibold">
-              {isEncrypted ? "🔒 Encrypted" : bidCount}
+            <span className="text-white font-semibold flex items-center gap-2">
+              {isEncrypted ? "🔒 Encrypted" : realTimeBidCount}
+              {auctionEvents.length > 0 && (
+                <Activity className="h-4 w-4 text-green-400 animate-pulse" />
+              )}
             </span>
           </div>
           
@@ -146,10 +173,11 @@ export const EncryptedAuctionCard = ({
             {!showBidForm ? (
               <Button
                 onClick={() => setShowBidForm(true)}
-                className="w-full bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-600 hover:to-purple-700 text-white"
+                disabled={!fheInitialized}
+                className="w-full bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-600 hover:to-purple-700 text-white disabled:opacity-50"
               >
                 <Lock className="h-4 w-4 mr-2" />
-                Place Encrypted Bid
+                {fheInitialized ? 'Place Encrypted Bid' : 'Initializing FHE...'}
               </Button>
             ) : (
               <div className="space-y-3">

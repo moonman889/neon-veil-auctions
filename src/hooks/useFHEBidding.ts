@@ -1,47 +1,65 @@
-import { useState, useCallback } from 'react';
-import { useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
+import { useState, useCallback, useEffect } from 'react';
+import { useAccount, useWriteContract, useWaitForTransactionReceipt, useReadContract } from 'wagmi';
 import { contractConfig } from '../config/contracts';
 import { toast } from 'sonner';
+import { 
+  encryptBidAmount, 
+  encryptStartingPrice, 
+  decryptBidAmount, 
+  verifyRangeProof,
+  initializeFHE,
+  getFHEStatus 
+} from '../lib/fhe-encryption';
 
 // FHE utility functions for encrypted bidding
 export const useFHEBidding = () => {
   const { address } = useAccount();
   const [isEncrypting, setIsEncrypting] = useState(false);
   const [isBidding, setIsBidding] = useState(false);
+  const [fheInitialized, setFheInitialized] = useState(false);
   
   const { writeContract, data: hash, error, isPending } = useWriteContract();
   const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({
     hash,
   });
 
-  // Simulate FHE encryption (in real implementation, this would use Zama's FHE library)
-  const encryptBidAmount = useCallback(async (amount: number): Promise<{ encryptedData: string; proof: string }> => {
+  // Initialize FHE on component mount
+  useEffect(() => {
+    const initFHE = async () => {
+      try {
+        await initializeFHE();
+        setFheInitialized(true);
+        console.log('FHE initialized successfully');
+      } catch (error) {
+        console.error('Failed to initialize FHE:', error);
+        toast.error('Failed to initialize FHE encryption');
+      }
+    };
+
+    initFHE();
+  }, []);
+
+  // Real FHE encryption using the FHE library
+  const encryptBidAmountLocal = useCallback(async (amount: number): Promise<{ encryptedData: string; proof: string }> => {
+    if (!fheInitialized) {
+      throw new Error('FHE not initialized');
+    }
+
     setIsEncrypting(true);
     
     try {
-      // Simulate encryption process
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // In real implementation, this would use FHE encryption
-      const encryptedData = btoa(JSON.stringify({
-        amount: amount,
-        timestamp: Date.now(),
-        nonce: Math.random().toString(36).substring(7)
-      }));
-      
-      const proof = btoa(JSON.stringify({
-        commitment: `0x${Math.random().toString(16).substring(2, 66)}`,
-        rangeProof: `0x${Math.random().toString(16).substring(2, 66)}`
-      }));
-      
-      return { encryptedData, proof };
+      const result = await encryptBidAmount(amount);
+      return {
+        encryptedData: result.encryptedData,
+        proof: result.proof
+      };
     } catch (error) {
-      console.error('Encryption failed:', error);
+      console.error('FHE encryption failed:', error);
       throw new Error('Failed to encrypt bid amount');
     } finally {
       setIsEncrypting(false);
     }
-  }, []);
+  }, [fheInitialized]);
 
   // Place an encrypted bid
   const placeEncryptedBid = useCallback(async (auctionId: number, bidAmount: number) => {
@@ -59,18 +77,20 @@ export const useFHEBidding = () => {
     
     try {
       // Encrypt the bid amount using FHE
-      const { encryptedData, proof } = await encryptBidAmount(bidAmount);
+      const { encryptedData, proof } = await encryptBidAmountLocal(bidAmount);
       
-      // Convert to the format expected by the contract
-      const encryptedBid = `0x${Buffer.from(encryptedData).toString('hex')}`;
-      const inputProof = `0x${Buffer.from(proof).toString('hex')}`;
+      // Verify the range proof before sending to contract
+      const isValidProof = await verifyRangeProof(encryptedData, proof, [0, 1000 * 1e18]);
+      if (!isValidProof) {
+        throw new Error('Invalid range proof');
+      }
       
       // Call the smart contract with encrypted data
       writeContract({
         address: contractConfig.address as `0x${string}`,
         abi: contractConfig.abi,
         functionName: 'placeBid',
-        args: [BigInt(auctionId), encryptedBid as `0x${string}`, inputProof as `0x${string}`],
+        args: [BigInt(auctionId), encryptedData as `0x${string}`, proof as `0x${string}`],
         value: BigInt(bidAmount * 1e18), // Convert to wei
       });
       
@@ -81,7 +101,7 @@ export const useFHEBidding = () => {
     } finally {
       setIsBidding(false);
     }
-  }, [address, encryptBidAmount, writeContract]);
+  }, [address, encryptBidAmountLocal, writeContract]);
 
   // Create an auction with encrypted starting price
   const createEncryptedAuction = useCallback(async (
@@ -101,11 +121,11 @@ export const useFHEBidding = () => {
     
     try {
       // Encrypt the starting price
-      const { encryptedData, proof } = await encryptBidAmount(startingPrice);
+      const { encryptedPrice, proof } = await encryptStartingPrice(startingPrice);
       
-      // For auction creation, we'll use the plain starting price in the contract
-      // but log the encrypted version for demonstration
-      console.log('Encrypted starting price:', encryptedData);
+      // Log the encrypted version for demonstration
+      console.log('Encrypted starting price:', encryptedPrice);
+      console.log('Range proof:', proof);
       
       writeContract({
         address: contractConfig.address as `0x${string}`,
@@ -128,7 +148,7 @@ export const useFHEBidding = () => {
     } finally {
       setIsBidding(false);
     }
-  }, [address, encryptBidAmount, writeContract]);
+  }, [address, writeContract]);
 
   // End an auction
   const endAuction = useCallback(async (auctionId: number) => {
@@ -205,6 +225,7 @@ export const useFHEBidding = () => {
     isSuccess,
     error,
     hash,
+    fheInitialized,
     
     // Actions
     placeEncryptedBid,
@@ -212,6 +233,8 @@ export const useFHEBidding = () => {
     endAuction,
     settleAuction,
     withdrawBid,
-    encryptBidAmount,
+    encryptBidAmount: encryptBidAmountLocal,
+    decryptBidAmount,
+    verifyRangeProof,
   };
 };
