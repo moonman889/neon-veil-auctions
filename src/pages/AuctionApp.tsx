@@ -193,7 +193,7 @@ const AuctionApp = () => {
                   bidCount={Math.floor(Math.random() * 20) + 1}
                   isActive={true}
                   isEnded={false}
-                  seller="0x742d35Cc6634C0532925a3b8D0C0C1C1C1C1C1C1"
+                  seller="0x0000000000000000000000000000000000000000"
                   endTime={Date.now() + (parseInt(auction.timeLeft.split('h')[0]) * 3600 + parseInt(auction.timeLeft.split('h')[1].split('m')[0]) * 60) * 1000}
                   minBidIncrement={0.01}
                 />

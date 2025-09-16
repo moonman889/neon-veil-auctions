@@ -31,9 +31,9 @@ Add the following environment variables in the Vercel dashboard:
 
 ```
 VITE_CHAIN_ID=11155111
-VITE_RPC_URL=https://sepolia.infura.io/v3/b18fb7e6ca7045ac83c41157ab93f990
-VITE_WALLET_CONNECT_PROJECT_ID=2ec9743d0d0cd7fb94dee1a7e6d33475
-VITE_INFURA_API_KEY=b18fb7e6ca7045ac83c41157ab93f990
+VITE_RPC_URL=https://sepolia.infura.io/v3/YOUR_INFURA_API_KEY
+VITE_WALLET_CONNECT_PROJECT_ID=YOUR_WALLET_CONNECT_PROJECT_ID
+VITE_INFURA_API_KEY=YOUR_INFURA_API_KEY
 VITE_ALTERNATIVE_RPC_URL=https://1rpc.io/sepolia
 ```
 
@@ -95,9 +95,9 @@ After deploying your smart contract to Sepolia testnet:
 ### Environment Variables Checklist
 
 - [ ] `VITE_CHAIN_ID` = 11155111 (Sepolia)
-- [ ] `VITE_RPC_URL` = Valid Sepolia RPC endpoint
-- [ ] `VITE_WALLET_CONNECT_PROJECT_ID` = Valid WalletConnect project ID
-- [ ] `VITE_INFURA_API_KEY` = Valid Infura API key
+- [ ] `VITE_RPC_URL` = Your Infura Sepolia RPC endpoint
+- [ ] `VITE_WALLET_CONNECT_PROJECT_ID` = Your WalletConnect project ID
+- [ ] `VITE_INFURA_API_KEY` = Your Infura API key
 - [ ] `VITE_ALTERNATIVE_RPC_URL` = Backup RPC endpoint
 
 ## Monitoring and Maintenance

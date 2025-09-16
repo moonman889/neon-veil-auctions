@@ -1,7 +1,7 @@
 // Contract configuration for Neon Veil Auctions
 export const contractConfig = {
   // Contract address on Sepolia testnet (to be updated after deployment)
-  address: '0x0000000000000000000000000000000000000000', // Replace with actual deployed address
+  address: import.meta.env.VITE_CONTRACT_ADDRESS || '0x0000000000000000000000000000000000000000',
   
   // Contract ABI (simplified version - full ABI will be generated after compilation)
   abi: [

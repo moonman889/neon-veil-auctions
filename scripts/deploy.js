@@ -8,7 +8,7 @@ async function main() {
   const NeonVeilAuctions = await ethers.getContractFactory("NeonVeilAuctions");
   
   // Set deployment parameters
-  const verifier = "0x742d35Cc6634C0532925a3b8D0C0C1C1C1C1C1C1"; // Replace with actual verifier address
+  const verifier = process.env.FHE_VERIFIER_ADDRESS || "0x0000000000000000000000000000000000000000"; // Replace with actual verifier address
   const platformFeePercentage = 250; // 2.5% platform fee
   
   // Deploy the contract
@@ -21,6 +21,7 @@ async function main() {
   console.log("Neon Veil Auctions deployed to:", contractAddress);
   console.log("Verifier address:", verifier);
   console.log("Platform fee percentage:", platformFeePercentage);
+  console.log("Please update VITE_CONTRACT_ADDRESS in your .env.local file with this address");
   
   // Verify contract deployment
   console.log("Verifying contract deployment...");
