@@ -1,9 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { AuctionCard } from "@/components/AuctionCard";
-import { WalletConnect } from "@/components/WalletConnect";
-import { useWallet } from "@/hooks/useWallet";
+import { EncryptedAuctionCard } from "@/components/EncryptedAuctionCard";
+import { CreateEncryptedAuction } from "@/components/CreateEncryptedAuction";
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { useAccount } from 'wagmi';
 import { Link } from "react-router-dom";
-import { ArrowLeft, Plus } from "lucide-react";
+import { ArrowLeft, Plus, Shield, Lock } from "lucide-react";
+import { useState } from 'react';
 
 // Mock data for auctions
 const mockAuctions = [
@@ -70,7 +73,8 @@ const mockAuctions = [
 ];
 
 const AuctionApp = () => {
-  const { isConnected } = useWallet();
+  const { isConnected } = useAccount();
+  const [showCreateAuction, setShowCreateAuction] = useState(false);
 
   return (
     <div className="min-h-screen bg-background">
@@ -86,7 +90,7 @@ const AuctionApp = () => {
               <span className="hidden md:inline">Back to Home</span>
             </Link>
             <div className="w-8 h-8 bg-gradient-to-br from-neon-cyan to-neon-purple rounded-lg animate-glow"></div>
-            <h1 className="text-xl font-bold text-gradient-neon">CryptoVault</h1>
+            <h1 className="text-xl font-bold text-gradient-neon">Neon Veil Auctions</h1>
           </div>
           
           <nav className="hidden md:flex items-center space-x-6">
@@ -101,7 +105,7 @@ const AuctionApp = () => {
             </a>
           </nav>
           
-          <WalletConnect />
+          <ConnectButton />
         </div>
       </header>
 
@@ -153,9 +157,10 @@ const AuctionApp = () => {
               <Button 
                 variant="outline"
                 className="border-primary text-primary hover:bg-primary hover:text-background"
+                onClick={() => setShowCreateAuction(true)}
               >
                 <Plus className="w-4 h-4 mr-2" />
-                Create Auction
+                Create Encrypted Auction
               </Button>
             )}
           </div>
@@ -177,7 +182,24 @@ const AuctionApp = () => {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {mockAuctions.map((auction) => (
-              <AuctionCard key={auction.id} {...auction} />
+              auction.isEncrypted ? (
+                <EncryptedAuctionCard 
+                  key={auction.id}
+                  auctionId={parseInt(auction.id)}
+                  name={auction.title}
+                  description={auction.description}
+                  imageUrl={auction.image}
+                  currentBid={auction.currentBid}
+                  bidCount={Math.floor(Math.random() * 20) + 1}
+                  isActive={true}
+                  isEnded={false}
+                  seller="0x742d35Cc6634C0532925a3b8D0C0C1C1C1C1C1C1"
+                  endTime={Date.now() + (parseInt(auction.timeLeft.split('h')[0]) * 3600 + parseInt(auction.timeLeft.split('h')[1].split('m')[0]) * 60) * 1000}
+                  minBidIncrement={0.01}
+                />
+              ) : (
+                <AuctionCard key={auction.id} {...auction} />
+              )
             ))}
           </div>
           
@@ -211,6 +233,31 @@ const AuctionApp = () => {
           </div>
         </div>
       </section>
+
+      {/* Create Auction Modal */}
+      {showCreateAuction && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+            <div className="bg-slate-900/95 backdrop-blur-md rounded-lg border border-slate-700/50 p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                  <Shield className="h-6 w-6 text-cyan-400" />
+                  Create Encrypted Auction
+                </h2>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowCreateAuction(false)}
+                  className="text-slate-400 hover:text-white"
+                >
+                  ✕
+                </Button>
+              </div>
+              <CreateEncryptedAuction />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

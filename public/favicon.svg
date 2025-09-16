@@ -1,21 +1,27 @@
 <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="shieldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    <linearGradient id="neonGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00FFFF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8B5CF6;stop-opacity:1" />
     </linearGradient>
-    <linearGradient id="backgroundGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#1e293b;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#0f172a;stop-opacity:1" />
-    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
   </defs>
   
-  <!-- Background circle -->
-  <circle cx="16" cy="16" r="15" fill="url(#backgroundGradient)" stroke="url(#shieldGradient)" stroke-width="2"/>
+  <!-- Background circle with gradient -->
+  <circle cx="16" cy="16" r="14" fill="url(#neonGradient)" filter="url(#glow)"/>
   
-  <!-- Shield icon -->
-  <path d="M16 4L22 8V16C22 20.5 16 28 16 28S10 20.5 10 16V8L16 4Z" fill="url(#shieldGradient)" stroke="white" stroke-width="1" stroke-linejoin="round"/>
+  <!-- Auction hammer icon -->
+  <path d="M8 12 L12 8 L16 12 L20 8 L24 12" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M16 12 L16 20" stroke="white" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="16" cy="22" r="2" fill="white"/>
   
-  <!-- FHE text -->
-  <text x="16" y="24" font-family="Arial, sans-serif" font-size="6" font-weight="bold" text-anchor="middle" fill="white">FHE</text>
+  <!-- Privacy shield overlay -->
+  <path d="M16 6 L20 8 L20 14 L16 18 L12 14 L12 8 Z" fill="rgba(255,255,255,0.2)" stroke="white" stroke-width="1"/>
+  <path d="M16 10 L18 12 L16 14 L14 12 Z" fill="white"/>
 </svg>
